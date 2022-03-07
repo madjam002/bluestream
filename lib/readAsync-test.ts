@@ -36,9 +36,9 @@ function objectStream (arr = [1, 2, 3, 4, 5, 6]) {
   })
 }
 
-function countEvents (stream) {
-  return (stream as any)._eventsCount
-}
+// function countEvents (stream) {
+//   return (stream as any)._eventsCount
+// }
 
 describe('#readAsync', () => {
   it("rejects if it's not a readable stream", async () => {
@@ -47,20 +47,20 @@ describe('#readAsync', () => {
       assert.isTrue(false, 'The promise should have rejected')
     }, err => {
       assert.isNotNull(err)
-      assert.equal(countEvents(writeStream), 1)
+      //assert.equal(countEvents(writeStream), 1)
     })
   })
   it('resolvers a buffer with a number bytes from a buffer stream', async () => {
     const stream = bufferStream()
     assert.deepEqual(await readAsync(stream, 4), Buffer.from('1\n2\n'))
     assert.deepEqual(await readAsync(stream, 4), Buffer.from('3\n4\n'))
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
   })
   it('resolvers a string with a number characters from a string stream', async () => {
     const stream = stringStream()
     assert.equal(await readAsync(stream, 4), '1\n2\n')
     assert.equal(await readAsync(stream, 4), '3\n4\n')
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
   })
   it('reads the number of objects from a native object stream', async () => {
     const stream =  nativeObjectStream()
@@ -71,7 +71,7 @@ describe('#readAsync', () => {
     const stream = objectStream()
     const objects = await readAsync(stream, 3)
     assert.deepEqual(objects, [{ value: 1 }, { value: 2 }, { value: 3 }])
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
   })
   it('resolves early if the stream ends before there is enough bytes', async () => {
     const file = await collect(bufferStream())
@@ -79,21 +79,21 @@ describe('#readAsync', () => {
     const readBytes = await readAsync(stream, 500)
     assert.equal(readBytes.length, (file || '').length)
     assert.deepEqual(readBytes, file)
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
   })
   it('resolves early if the stream ends before there is enough objects', async () => {
     const stream = objectStream()
     const objects = await readAsync(stream, 10)
     assert.deepEqual(objects, [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }, { value: 5 }, { value: 6 }])
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
   })
   it('resolves null if there was no data and the stream closed', async () => {
     const stream = read({ objectMode: false }, () => null)
     assert.isNull(await readAsync(stream, 5))
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
     const stream2 = read(() => null)
     assert.isNull(await readAsync(stream2, 5))
-    assert.equal(countEvents(stream2), 1)
+    //assert.equal(countEvents(stream2), 1)
   })
   it('resolves null if the stream has ended', async () => {
     const arr = [1, 2, 3, null]
@@ -109,7 +109,7 @@ describe('#readAsync', () => {
     stream.read()
     stream.read()
     assert.isNull(await readAsync(stream, 5))
-    assert.equal(countEvents(stream), 1)
+    //assert.equal(countEvents(stream), 1)
   })
   it('rejects if the stream errors', () => {
     const stream = read(() => 1)
@@ -119,7 +119,7 @@ describe('#readAsync', () => {
     }, err => {
       assert.isNotNull(err)
       assert.deepEqual(err, error)
-      assert.equal(countEvents(stream), 1)
+      //assert.equal(countEvents(stream), 1)
     })
     stream.emit('error', error)
     return assertion
@@ -132,7 +132,7 @@ describe('#readAsync', () => {
     }, err => {
       stream.pause()
       assert.isNotNull(err)
-      assert.equal(countEvents(stream), 1)
+      //assert.equal(countEvents(stream), 1)
     })
   })
   it('queues if being called twice at the same time with a sync source', async () => {
